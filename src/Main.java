@@ -1,10 +1,17 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner input = new Scanner(System.in);
         ExpenseTracker expenses = null;
         double userBudget = 0;
+        try {
+            ExpenseTracker loadedExpenses = ExpenseLoader.loadExpenses();
+            expenses.expenseLoader();
+        } catch (Exception e) {
+            System.out.println("No expenses found.");
+        }
         while(true) {
             System.out.println("Expenses Tracker Menu:");
             System.out.println("1. Set Budget.");
@@ -12,7 +19,8 @@ public class Main {
             System.out.println("3. Display Expenses");
             System.out.println("4. Filter expenses by category");
             System.out.println("5. Filter expenses by amount");
-            System.out.println("6. Exit");
+            System.out.println("6. Budget over expenses");
+            System.out.println("7. Exit");
             int userInput = input.nextInt(); input.nextLine();
             if (userInput == 1) {
                 System.out.println("Please enter the overall budget allocated:");
@@ -28,7 +36,7 @@ public class Main {
                     input.nextLine();
                     System.out.println("Enter recipient of the expense:");
                     String recipient = input.nextLine();
-                    System.out.println("Here's the list of potential expense categories:");
+                    System.out.println("Here's the list of expense categories:");
                     for (Category category : Category.values()) {
                         System.out.println(category);
                     }
@@ -37,20 +45,16 @@ public class Main {
                     Expense expense = new Expense(expenseAmount, recipient, category);
                     expenses.addExpense(expense);
                 } else {
-                    System.out.println("Please set a budget first:");
-                    userBudget = input.nextDouble();
+                    userBudget = budgetForce(input);
                     expenses = new ExpenseTracker(userBudget);
-                    System.out.println("Budget set to: " + userBudget);
                 }
             } else if (userInput == 3) {
                     if (expenses != null) {
                         expenses.viewExpenses();
                         System.out.println();
                     } else {
-                        System.out.println("Please set a budget first:");
-                        userBudget = input.nextDouble();
+                        userBudget = budgetForce(input);
                         expenses = new ExpenseTracker(userBudget);
-                        System.out.println("Budget set to: " + userBudget);
                     }
             } else if (userInput == 4) {
                 if (expenses != null) {
@@ -58,10 +62,8 @@ public class Main {
                     Category category = Category.valueOf(input.nextLine().toUpperCase());
                     expenses.filterByCategory(category);
                 } else {
-                    System.out.println("Please set a budget first:");
-                    userBudget = input.nextDouble();
+                    userBudget = budgetForce(input);
                     expenses = new ExpenseTracker(userBudget);
-                    System.out.println("Budget set to: " + userBudget);
                 }
             } else if (userInput == 5) {
                 if (expenses != null) {
@@ -69,14 +71,27 @@ public class Main {
                     double expenseAmount = input.nextDouble();
                     expenses.filterByAmount(expenseAmount);
                 } else {
-                    System.out.println("Please set a budget first:");
-                    userBudget = input.nextDouble();
+                    userBudget = budgetForce(input);
                     expenses = new ExpenseTracker(userBudget);
-                    System.out.println("Budget set to: " + userBudget);
+                }
+            } else if (userInput == 6) {
+                if (expenses != null) {
+                    expenses.budgetCompare();
+                } else {
+                    userBudget = budgetForce(input);
+                    expenses = new ExpenseTracker(userBudget);
                 }
             } else {
+                ExpenseDisplay.expenseDisplay(expenses);
                 break;
             }
         }
+    }
+
+    public static double budgetForce(Scanner input) {
+        System.out.println("Please set a budget first:");
+        double userBudget = input.nextDouble();
+        System.out.println("Budget set to: " + userBudget);
+        return userBudget;
     }
 }

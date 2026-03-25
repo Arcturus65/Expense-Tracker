@@ -13,6 +13,14 @@ public class ExpenseTracker {
         expenses.add(expense);
     }
 
+    public ArrayList<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public double getBudget() {
+        return budget;
+    }
+
     public void viewExpenses() {
         if (expenses.size() == 0) {
             System.out.println("No expenses found.");
@@ -86,5 +94,29 @@ public class ExpenseTracker {
                 System.out.println("No expenses found.");
             }
         }
+    }
+
+    public void budgetCompare () {
+        if (expenses.size() == 0) {
+            System.out.println("No expenses found.");
+        } else {
+            double amountSpent = 0;
+            double delta;
+            for (Expense expense : expenses) {
+                amountSpent += expense.getAmount();
+            }
+            System.out.println("Amount expended is: " + amountSpent + " lei.");
+            if (amountSpent > budget) {
+                delta = amountSpent - budget;
+                System.out.println("You've exceeded your budget by " + delta + " lei.");
+            } else {
+                delta = budget - amountSpent;
+                System.out.println("You've spent " + amountSpent + " lei with " +  delta + " to spare.");
+            }
+        }
+    }
+
+    public void expenseLoader() {
+        this.expenses.addAll(expenses);
     }
 }

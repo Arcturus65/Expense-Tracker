@@ -13,6 +13,13 @@ public class Expense {
         this.date = LocalDate.now();
     }
 
+    public Expense(double amount, String recipient, Category category, LocalDate date) {
+        this.amount = amount;
+        this.recipient = recipient;
+        this.date = date;
+        this.category = category;
+    }
+
     public double getAmount() {
         return amount;
     }
