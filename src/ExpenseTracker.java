@@ -1,4 +1,7 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ExpenseTracker {
     private ArrayList<Expense> expenses;
@@ -22,12 +25,12 @@ public class ExpenseTracker {
     }
 
     public void viewExpenses() {
-        if (expenses.size() == 0) {
+        if (expenses.isEmpty()) {
             System.out.println("No expenses found.");
         } else {
             System.out.println("You expenses are the following:");
             for (Expense expense : expenses) {
-                System.out.println("Amount expended is: " +expense.getAmount() + " lei.");
+                System.out.println("Amount expended is: " + expense.getAmount() + " lei.");
                 System.out.println("Category of: " + expense.getCategory());
                 System.out.println("Date of payment: " + expense.getDate());
                 System.out.println("Paid towards: " + expense.getRecipient());
@@ -36,9 +39,9 @@ public class ExpenseTracker {
         }
     }
 
-    public void filterByCategory (Category category) {
+    public void filterByCategory(Category category) {
         double amountSpent = 0;
-        if (expenses.size() == 0) {
+        if (expenses.isEmpty()) {
             System.out.println("No expenses found.");
         } else {
             boolean expenseFound = false;
@@ -65,8 +68,8 @@ public class ExpenseTracker {
         }
     }
 
-    public void filterByAmount (double amount) {
-        if (expenses.size() == 0) {
+    public void filterByAmount(double amount) {
+        if (expenses.isEmpty()) {
             System.out.println("No expenses found.");
         } else {
             boolean expenseFound = false;
@@ -96,8 +99,8 @@ public class ExpenseTracker {
         }
     }
 
-    public void budgetCompare () {
-        if (expenses.size() == 0) {
+    public void budgetCompare() {
+        if (expenses.isEmpty()) {
             System.out.println("No expenses found.");
         } else {
             double amountSpent = 0;
@@ -111,12 +114,70 @@ public class ExpenseTracker {
                 System.out.println("You've exceeded your budget by " + delta + " lei.");
             } else {
                 delta = budget - amountSpent;
-                System.out.println("You've spent " + amountSpent + " lei with " +  delta + " to spare.");
+                System.out.println("You've spent " + amountSpent + " lei with " + delta + " to spare.");
             }
         }
     }
 
     public void expenseLoader() {
         this.expenses.addAll(expenses);
+    }
+
+    public void sortByAmount(boolean isReversed) {
+        if (expenses.isEmpty()) {
+            System.out.println("No expenses found.");
+        } else {
+            if (!isReversed) {
+                Collections.sort(expenses, Comparator.comparingDouble(Expense::getAmount));
+            } else {
+                Collections.sort(expenses, Comparator.comparingDouble(Expense::getAmount).reversed());
+            }
+            for (Expense expense : expenses) {
+                System.out.println("Amount expended is: " + expense.getAmount() + " lei.");
+                System.out.println("Category of: " + expense.getCategory());
+                System.out.println("Date of payment: " + expense.getDate());
+                System.out.println("Paid towards: " + expense.getRecipient());
+                System.out.println();
+            }
+        }
+    }
+
+    public void sortByDate (boolean isReversed) {
+        if (expenses.isEmpty()) {
+            System.out.println("No expenses found.");
+        } else {
+            if (!isReversed) {
+                Collections.sort(expenses, Comparator.comparing(Expense::getDate));
+            } else {
+                Collections.sort(expenses, Comparator.comparing(Expense::getDate).reversed());
+            }
+            for (Expense expense : expenses) {
+                System.out.println("Amount expended is: " + expense.getAmount() + " lei.");
+                System.out.println("Category of: " + expense.getCategory());
+                System.out.println("Date of payment: " + expense.getDate());
+                System.out.println("Paid towards: " + expense.getRecipient());
+                System.out.println();
+            }
+        }
+    }
+
+    public void monthlyReport(int month, int year) {
+        if (expenses.isEmpty()) {
+            System.out.println("No expenses found.");
+        } else {
+            double total = 0;
+            for (Expense expense : expenses) {
+                if (expense.getDate().getMonthValue() == month && expense.getDate().getYear() == year) {
+                    total += expense.getAmount();
+                }
+            }
+
+            System.out.println("You've spent " + total + " lei in month " + month + ".");
+            if (total > budget) {
+                System.out.println("You've exceeded your budget by " + (total - budget) + " lei.");
+            } else {
+                System.out.println("You managed to stay within budget range with " + (budget - total) + " lei remaining of your budget.");
+            }
+        }
     }
 }
